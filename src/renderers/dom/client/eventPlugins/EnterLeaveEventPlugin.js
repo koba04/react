@@ -101,7 +101,7 @@ var EnterLeaveEventPlugin = {
     var toNode =
       to == null ? win : ReactDOMComponentTree.getNodeFromInstance(to);
 
-    var leave = SyntheticMouseEvent.getPooled(
+    var leave = new SyntheticMouseEvent(
       eventTypes.mouseLeave,
       from,
       nativeEvent,
@@ -111,7 +111,7 @@ var EnterLeaveEventPlugin = {
     leave.target = fromNode;
     leave.relatedTarget = toNode;
 
-    var enter = SyntheticMouseEvent.getPooled(
+    var enter = new SyntheticMouseEvent(
       eventTypes.mouseEnter,
       to,
       nativeEvent,

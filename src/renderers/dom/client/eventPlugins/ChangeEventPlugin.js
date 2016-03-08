@@ -73,7 +73,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 function manualDispatchChangeEvent(nativeEvent) {
-  var event = SyntheticEvent.getPooled(
+  var event = new SyntheticEvent(
     eventTypes.change,
     activeElementInst,
     nativeEvent,
@@ -365,7 +365,7 @@ var ChangeEventPlugin = {
     if (getTargetInstFunc) {
       var inst = getTargetInstFunc(topLevelType, targetInst);
       if (inst) {
-        var event = SyntheticEvent.getPooled(
+        var event = new SyntheticEvent(
           eventTypes.change,
           inst,
           nativeEvent,

@@ -341,7 +341,7 @@ function setResponderAndExtractTransfer(
   // It's strange to get an `onMoveShouldSetResponder` when you're *already*
   // the responder.
   var skipOverBubbleShouldSetFrom = bubbleShouldSetFrom === responderInst;
-  var shouldSetEvent = ResponderSyntheticEvent.getPooled(
+  var shouldSetEvent = new ResponderSyntheticEvent(
     shouldSetEventType,
     bubbleShouldSetFrom,
     nativeEvent,
@@ -362,7 +362,7 @@ function setResponderAndExtractTransfer(
     return null;
   }
   var extracted;
-  var grantEvent = ResponderSyntheticEvent.getPooled(
+  var grantEvent = new ResponderSyntheticEvent(
     eventTypes.responderGrant,
     wantsResponderInst,
     nativeEvent,
@@ -374,7 +374,7 @@ function setResponderAndExtractTransfer(
   var blockNativeResponder = executeDirectDispatch(grantEvent) === true;
   if (responderInst) {
 
-    var terminationRequestEvent = ResponderSyntheticEvent.getPooled(
+    var terminationRequestEvent = new ResponderSyntheticEvent(
       eventTypes.responderTerminationRequest,
       responderInst,
       nativeEvent,
@@ -389,7 +389,7 @@ function setResponderAndExtractTransfer(
     }
 
     if (shouldSwitch) {
-      var terminateEvent = ResponderSyntheticEvent.getPooled(
+      var terminateEvent = new ResponderSyntheticEvent(
         eventTypes.responderTerminate,
         responderInst,
         nativeEvent,
@@ -400,7 +400,7 @@ function setResponderAndExtractTransfer(
       extracted = accumulate(extracted, [grantEvent, terminateEvent]);
       changeResponder(wantsResponderInst, blockNativeResponder);
     } else {
-      var rejectEvent = ResponderSyntheticEvent.getPooled(
+      var rejectEvent = new ResponderSyntheticEvent(
         eventTypes.responderReject,
         wantsResponderInst,
         nativeEvent,
@@ -526,7 +526,7 @@ var ResponderEventPlugin = {
 
     if (incrementalTouch) {
       var gesture =
-        ResponderSyntheticEvent.getPooled(
+        new ResponderSyntheticEvent(
           incrementalTouch,
           responderInst,
           nativeEvent,
@@ -550,7 +550,7 @@ var ResponderEventPlugin = {
       isResponderRelease ? eventTypes.responderRelease :
       null;
     if (finalTouch) {
-      var finalEvent = ResponderSyntheticEvent.getPooled(
+      var finalEvent = new ResponderSyntheticEvent(
         finalTouch, responderInst, nativeEvent, nativeEventTarget
       );
       finalEvent.touchHistory = ResponderTouchHistoryStore.touchHistory;
