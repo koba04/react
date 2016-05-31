@@ -184,4 +184,162 @@ describe('ReactPureComponent', function() {
     expect(functionalRenders).toBe(10);
   });
 
+  it('should be pure when the closest parent is the pure owner', function() {
+    var pureAppRenders = 0;
+    var functionalRenders = 0;
+    var container = document.createElement('div');
+
+    function Functional(props) {
+      ++functionalRenders;
+      return <div>{props.value}</div>;
+    }
+    class PureApp extends React.PureComponent {
+      render() {
+        ++pureAppRenders;
+        return (
+          <div>
+            <Functional value={this.props.value} />
+          </div>
+        );
+      }
+    }
+
+    ReactDOM.render(<PureApp value="foo" />, container);
+    ReactDOM.render(<PureApp value="foo" />, container);
+
+    expect(functionalRenders).toBe(1);
+    expect(pureAppRenders).toBe(1);
+  });
+
+  it('should be pure when the closest parent is PureComponent', function() {
+    var pureRenders = 0;
+    var impureRenders = 0;
+    var functionalRenders = 0;
+    var container = document.createElement('div');
+
+    function Functional(props) {
+      ++functionalRenders;
+      return <div>{props.value}</div>;
+    }
+    class Pure extends React.PureComponent {
+      render() {
+        ++pureRenders;
+        return this.props.children;
+      }
+    }
+    class Impure extends React.Component {
+      render() {
+        ++impureRenders;
+        return this.props.children;
+      }
+    }
+    class App extends React.Component {
+      render() {
+        return (
+          <Impure>
+            <Pure>
+              <Functional value={this.props.value} />
+            </Pure>
+          </Impure>
+        );
+      }
+    }
+
+    ReactDOM.render(<App value="foo" />, container);
+    ReactDOM.render(<App value="foo" />, container);
+
+    expect(pureRenders).toBe(2);
+    expect(impureRenders).toBe(2);
+    expect(functionalRenders).toBe(1);
+  });
+
+  it('should not be pure when the closest parent is not PureComponent', function() {
+    var pureRenders = 0;
+    var impureRenders = 0;
+    var functionalRenders = 0;
+    var container = document.createElement('div');
+
+    function Functional(props) {
+      ++functionalRenders;
+      return <div>{props.value}</div>;
+    }
+    class Pure extends React.PureComponent {
+      render() {
+        ++pureRenders;
+        return this.props.children;
+      }
+    }
+    class Impure extends React.Component {
+      render() {
+        ++impureRenders;
+        return this.props.children;
+      }
+    }
+    class PureApp extends React.PureComponent {
+      constructor(props) {
+        super(props);
+        this.state = {
+          value: 'foo',
+        };
+      }
+      render() {
+        return (
+          <Pure>
+            <Impure>
+              <Functional value={this.state.value} />
+            </Impure>
+          </Pure>
+        );
+      }
+    }
+
+    var component;
+    ReactDOM.render(<PureApp ref={c => component = c} />, container);
+    component.setState({value: 'foo'});
+    expect(pureRenders).toBe(2);
+    expect(impureRenders).toBe(2);
+    expect(functionalRenders).toBe(2);
+  });
+
+  it('can define custom shouldComponentUpdate in PureComponent', function() {
+    var impureRenders = 0;
+    var functionalRenders = 0;
+    var container = document.createElement('div');
+
+    function Functional(props) {
+      ++functionalRenders;
+      return <div>{props.value}</div>;
+    }
+    class Impure extends React.Component {
+      render() {
+        ++impureRenders;
+        return this.props.children;
+      }
+    }
+    class PureApp extends React.PureComponent {
+      constructor(props) {
+        super(props);
+        this.state = {
+          value: 'foo',
+        };
+      }
+      shouldComponentUpdate(nextProps, nextState) {
+        return this.state.value !== nextState.value;
+      }
+      render() {
+        return (
+          <Impure>
+            <Functional value={this.state.value} />
+          </Impure>
+        );
+      }
+    }
+
+    var component;
+    ReactDOM.render(<PureApp ref={c => component = c} />, container);
+    component.setState({value: 'foo'});
+    expect(impureRenders).toBe(1);
+    expect(functionalRenders).toBe(1);
+  });
+
 });
