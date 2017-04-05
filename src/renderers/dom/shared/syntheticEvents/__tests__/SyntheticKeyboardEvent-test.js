@@ -25,7 +25,7 @@ describe('SyntheticKeyboardEvent', () => {
     SyntheticKeyboardEvent = require('SyntheticKeyboardEvent');
     createEvent = function(nativeEvent) {
       var target = require('getEventTarget')(nativeEvent);
-      return SyntheticKeyboardEvent.getPooled({}, '', nativeEvent, target);
+      return new SyntheticKeyboardEvent({}, '', nativeEvent, target);
     };
   });
 
@@ -110,14 +110,6 @@ describe('SyntheticKeyboardEvent', () => {
       expect(syntheticEvent.isPropagationStopped()).toBe(false);
       syntheticEvent.stopPropagation();
       expect(syntheticEvent.isPropagationStopped()).toBe(true);
-    });
-
-    it('is able to `persist`', () => {
-      var syntheticEvent = createEvent({});
-
-      expect(syntheticEvent.isPersistent()).toBe(false);
-      syntheticEvent.persist();
-      expect(syntheticEvent.isPersistent()).toBe(true);
     });
   });
 });

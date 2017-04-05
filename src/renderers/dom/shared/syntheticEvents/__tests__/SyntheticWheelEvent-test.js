@@ -21,7 +21,7 @@ describe('SyntheticWheelEvent', () => {
 
     createEvent = function(nativeEvent) {
       var target = require('getEventTarget')(nativeEvent);
-      return SyntheticWheelEvent.getPooled({}, '', nativeEvent, target);
+      return new SyntheticWheelEvent({}, '', nativeEvent, target);
     };
   });
 
@@ -58,13 +58,5 @@ describe('SyntheticWheelEvent', () => {
     expect(syntheticEvent.isPropagationStopped()).toBe(false);
     syntheticEvent.stopPropagation();
     expect(syntheticEvent.isPropagationStopped()).toBe(true);
-  });
-
-  it('should be able to `persist`', () => {
-    var syntheticEvent = createEvent({});
-
-    expect(syntheticEvent.isPersistent()).toBe(false);
-    syntheticEvent.persist();
-    expect(syntheticEvent.isPersistent()).toBe(true);
   });
 });

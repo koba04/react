@@ -337,7 +337,7 @@ function setResponderAndExtractTransfer(
   // It's strange to get an `onMoveShouldSetResponder` when you're *already*
   // the responder.
   var skipOverBubbleShouldSetFrom = bubbleShouldSetFrom === responderInst;
-  var shouldSetEvent = ResponderSyntheticEvent.getPooled(
+  var shouldSetEvent = new ResponderSyntheticEvent(
     shouldSetEventType,
     bubbleShouldSetFrom,
     nativeEvent,
@@ -350,15 +350,12 @@ function setResponderAndExtractTransfer(
     EventPropagators.accumulateTwoPhaseDispatches(shouldSetEvent);
   }
   var wantsResponderInst = executeDispatchesInOrderStopAtTrue(shouldSetEvent);
-  if (!shouldSetEvent.isPersistent()) {
-    shouldSetEvent.constructor.release(shouldSetEvent);
-  }
 
   if (!wantsResponderInst || wantsResponderInst === responderInst) {
     return null;
   }
   var extracted;
-  var grantEvent = ResponderSyntheticEvent.getPooled(
+  var grantEvent = new ResponderSyntheticEvent(
     eventTypes.responderGrant,
     wantsResponderInst,
     nativeEvent,
@@ -369,7 +366,7 @@ function setResponderAndExtractTransfer(
   EventPropagators.accumulateDirectDispatches(grantEvent);
   var blockHostResponder = executeDirectDispatch(grantEvent) === true;
   if (responderInst) {
-    var terminationRequestEvent = ResponderSyntheticEvent.getPooled(
+    var terminationRequestEvent = new ResponderSyntheticEvent(
       eventTypes.responderTerminationRequest,
       responderInst,
       nativeEvent,
@@ -379,12 +376,9 @@ function setResponderAndExtractTransfer(
     EventPropagators.accumulateDirectDispatches(terminationRequestEvent);
     var shouldSwitch = !hasDispatches(terminationRequestEvent) ||
       executeDirectDispatch(terminationRequestEvent);
-    if (!terminationRequestEvent.isPersistent()) {
-      terminationRequestEvent.constructor.release(terminationRequestEvent);
-    }
 
     if (shouldSwitch) {
-      var terminateEvent = ResponderSyntheticEvent.getPooled(
+      var terminateEvent = new ResponderSyntheticEvent(
         eventTypes.responderTerminate,
         responderInst,
         nativeEvent,
@@ -395,7 +389,7 @@ function setResponderAndExtractTransfer(
       extracted = accumulate(extracted, [grantEvent, terminateEvent]);
       changeResponder(wantsResponderInst, blockHostResponder);
     } else {
-      var rejectEvent = ResponderSyntheticEvent.getPooled(
+      var rejectEvent = new ResponderSyntheticEvent(
         eventTypes.responderReject,
         wantsResponderInst,
         nativeEvent,
@@ -519,7 +513,7 @@ var ResponderEventPlugin = {
           : isResponderTouchEnd ? eventTypes.responderEnd : null;
 
     if (incrementalTouch) {
-      var gesture = ResponderSyntheticEvent.getPooled(
+      var gesture = new ResponderSyntheticEvent(
         incrementalTouch,
         responderInst,
         nativeEvent,
@@ -540,7 +534,7 @@ var ResponderEventPlugin = {
       ? eventTypes.responderTerminate
       : isResponderRelease ? eventTypes.responderRelease : null;
     if (finalTouch) {
-      var finalEvent = ResponderSyntheticEvent.getPooled(
+      var finalEvent = new ResponderSyntheticEvent(
         finalTouch,
         responderInst,
         nativeEvent,

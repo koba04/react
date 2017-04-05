@@ -35,10 +35,6 @@ var eventQueue = null;
 var executeDispatchesAndRelease = function(event, simulated) {
   if (event) {
     EventPluginUtils.executeDispatchesInOrder(event, simulated);
-
-    if (!event.isPersistent()) {
-      event.constructor.release(event);
-    }
   }
 };
 var executeDispatchesAndReleaseSimulated = function(e) {

@@ -22,27 +22,7 @@ var InputEventInterface = {
   data: null,
 };
 
-/**
- * @param {object} dispatchConfig Configuration used to dispatch this event.
- * @param {string} dispatchMarker Marker identifying the event target.
- * @param {object} nativeEvent Native browser event.
- * @extends {SyntheticUIEvent}
- */
-function SyntheticInputEvent(
-  dispatchConfig,
-  dispatchMarker,
-  nativeEvent,
-  nativeEventTarget,
-) {
-  return SyntheticEvent.call(
-    this,
-    dispatchConfig,
-    dispatchMarker,
-    nativeEvent,
-    nativeEventTarget,
-  );
-}
-
-SyntheticEvent.augmentClass(SyntheticInputEvent, InputEventInterface);
+class SyntheticInputEvent extends SyntheticEvent {}
+SyntheticInputEvent.Interface = Object.assign({}, SyntheticEvent.Interface, InputEventInterface);
 
 module.exports = SyntheticInputEvent;

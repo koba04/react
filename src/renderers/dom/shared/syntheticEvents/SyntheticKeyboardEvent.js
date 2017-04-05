@@ -69,27 +69,7 @@ var KeyboardEventInterface = {
   },
 };
 
-/**
- * @param {object} dispatchConfig Configuration used to dispatch this event.
- * @param {string} dispatchMarker Marker identifying the event target.
- * @param {object} nativeEvent Native browser event.
- * @extends {SyntheticUIEvent}
- */
-function SyntheticKeyboardEvent(
-  dispatchConfig,
-  dispatchMarker,
-  nativeEvent,
-  nativeEventTarget,
-) {
-  return SyntheticUIEvent.call(
-    this,
-    dispatchConfig,
-    dispatchMarker,
-    nativeEvent,
-    nativeEventTarget,
-  );
-}
-
-SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
+class SyntheticKeyboardEvent extends SyntheticUIEvent {}
+SyntheticKeyboardEvent.Interface = Object.assign({}, SyntheticUIEvent.Interface, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;

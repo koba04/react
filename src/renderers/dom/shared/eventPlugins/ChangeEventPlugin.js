@@ -44,7 +44,7 @@ var eventTypes = {
 };
 
 function createAndAccumulateChangeEvent(inst, nativeEvent, target) {
-  var event = SyntheticEvent.getPooled(
+  var event = new SyntheticEvent(
     eventTypes.change,
     inst,
     nativeEvent,

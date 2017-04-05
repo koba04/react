@@ -30,27 +30,7 @@ var TouchEventInterface = {
   getModifierState: getEventModifierState,
 };
 
-/**
- * @param {object} dispatchConfig Configuration used to dispatch this event.
- * @param {string} dispatchMarker Marker identifying the event target.
- * @param {object} nativeEvent Native browser event.
- * @extends {SyntheticUIEvent}
- */
-function SyntheticTouchEvent(
-  dispatchConfig,
-  dispatchMarker,
-  nativeEvent,
-  nativeEventTarget,
-) {
-  return SyntheticUIEvent.call(
-    this,
-    dispatchConfig,
-    dispatchMarker,
-    nativeEvent,
-    nativeEventTarget,
-  );
-}
-
-SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
+class SyntheticTouchEvent extends SyntheticUIEvent {}
+SyntheticTouchEvent.Interface = Object.assign({}, SyntheticUIEvent.Interface, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;

@@ -51,7 +51,7 @@ var ReactNativeBridgeEventPlugin = {
   ): ?Object {
     var bubbleDispatchConfig = customBubblingEventTypes[topLevelType];
     var directDispatchConfig = customDirectEventTypes[topLevelType];
-    var event = SyntheticEvent.getPooled(
+    var event = new SyntheticEvent(
       bubbleDispatchConfig || directDispatchConfig,
       targetInst,
       nativeEvent,

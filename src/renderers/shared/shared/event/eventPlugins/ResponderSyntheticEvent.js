@@ -24,27 +24,7 @@ var ResponderEventInterface = {
   },
 };
 
-/**
- * @param {object} dispatchConfig Configuration used to dispatch this event.
- * @param {string} dispatchMarker Marker identifying the event target.
- * @param {object} nativeEvent Native event.
- * @extends {SyntheticEvent}
- */
-function ResponderSyntheticEvent(
-  dispatchConfig,
-  dispatchMarker,
-  nativeEvent,
-  nativeEventTarget,
-) {
-  return SyntheticEvent.call(
-    this,
-    dispatchConfig,
-    dispatchMarker,
-    nativeEvent,
-    nativeEventTarget,
-  );
-}
-
-SyntheticEvent.augmentClass(ResponderSyntheticEvent, ResponderEventInterface);
+class ResponderSyntheticEvent extends SyntheticEvent {}
+ResponderSyntheticEvent.Interface = Object.assign({}, SyntheticEvent.Interface, ResponderEventInterface);
 
 module.exports = ResponderSyntheticEvent;

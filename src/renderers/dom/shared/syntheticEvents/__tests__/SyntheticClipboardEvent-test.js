@@ -20,7 +20,7 @@ describe('SyntheticClipboardEvent', () => {
     SyntheticClipboardEvent = require('SyntheticClipboardEvent');
     createEvent = function(nativeEvent) {
       var target = require('getEventTarget')(nativeEvent);
-      return SyntheticClipboardEvent.getPooled({}, '', nativeEvent, target);
+      return new SyntheticClipboardEvent({}, '', nativeEvent, target);
     };
   });
 
@@ -37,7 +37,6 @@ describe('SyntheticClipboardEvent', () => {
             'types',
           ]);
           var clipboardEvent = createEvent({clipboardData: clipboardData});
-
           expect(clipboardEvent.clipboardData).toBe(clipboardData);
         });
       });
@@ -64,14 +63,6 @@ describe('SyntheticClipboardEvent', () => {
       expect(syntheticEvent.isPropagationStopped()).toBe(false);
       syntheticEvent.stopPropagation();
       expect(syntheticEvent.isPropagationStopped()).toBe(true);
-    });
-
-    it('is able to `persist`', () => {
-      var syntheticEvent = createEvent({});
-
-      expect(syntheticEvent.isPersistent()).toBe(false);
-      syntheticEvent.persist();
-      expect(syntheticEvent.isPersistent()).toBe(true);
     });
   });
 });

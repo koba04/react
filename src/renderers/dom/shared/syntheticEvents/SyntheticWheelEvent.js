@@ -42,27 +42,7 @@ var WheelEventInterface = {
   deltaMode: null,
 };
 
-/**
- * @param {object} dispatchConfig Configuration used to dispatch this event.
- * @param {string} dispatchMarker Marker identifying the event target.
- * @param {object} nativeEvent Native browser event.
- * @extends {SyntheticMouseEvent}
- */
-function SyntheticWheelEvent(
-  dispatchConfig,
-  dispatchMarker,
-  nativeEvent,
-  nativeEventTarget,
-) {
-  return SyntheticMouseEvent.call(
-    this,
-    dispatchConfig,
-    dispatchMarker,
-    nativeEvent,
-    nativeEventTarget,
-  );
-}
-
-SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
+class SyntheticWheelEvent extends SyntheticMouseEvent {}
+SyntheticWheelEvent.Interface = Object.assign({}, SyntheticMouseEvent.Interface, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;

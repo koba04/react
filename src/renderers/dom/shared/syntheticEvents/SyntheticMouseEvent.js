@@ -54,27 +54,7 @@ var MouseEventInterface = {
   },
 };
 
-/**
- * @param {object} dispatchConfig Configuration used to dispatch this event.
- * @param {string} dispatchMarker Marker identifying the event target.
- * @param {object} nativeEvent Native browser event.
- * @extends {SyntheticUIEvent}
- */
-function SyntheticMouseEvent(
-  dispatchConfig,
-  dispatchMarker,
-  nativeEvent,
-  nativeEventTarget,
-) {
-  return SyntheticUIEvent.call(
-    this,
-    dispatchConfig,
-    dispatchMarker,
-    nativeEvent,
-    nativeEventTarget,
-  );
-}
-
-SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
+class SyntheticMouseEvent extends SyntheticUIEvent {}
+SyntheticMouseEvent.Interface = Object.assign({}, SyntheticUIEvent.Interface, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;

@@ -105,7 +105,7 @@ function constructSelectEvent(nativeEvent, nativeEventTarget) {
   if (!lastSelection || !shallowEqual(lastSelection, currentSelection)) {
     lastSelection = currentSelection;
 
-    var syntheticEvent = SyntheticEvent.getPooled(
+    var syntheticEvent = new SyntheticEvent(
       eventTypes.select,
       activeElementInst,
       nativeEvent,

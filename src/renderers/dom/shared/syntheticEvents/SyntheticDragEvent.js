@@ -21,27 +21,7 @@ var DragEventInterface = {
   dataTransfer: null,
 };
 
-/**
- * @param {object} dispatchConfig Configuration used to dispatch this event.
- * @param {string} dispatchMarker Marker identifying the event target.
- * @param {object} nativeEvent Native browser event.
- * @extends {SyntheticUIEvent}
- */
-function SyntheticDragEvent(
-  dispatchConfig,
-  dispatchMarker,
-  nativeEvent,
-  nativeEventTarget,
-) {
-  return SyntheticMouseEvent.call(
-    this,
-    dispatchConfig,
-    dispatchMarker,
-    nativeEvent,
-    nativeEventTarget,
-  );
-}
-
-SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
+class SyntheticDragEvent extends SyntheticMouseEvent {}
+SyntheticMouseEvent.Interface = Object.assign({}, SyntheticMouseEvent.Interface, DragEventInterface);
 
 module.exports = SyntheticDragEvent;

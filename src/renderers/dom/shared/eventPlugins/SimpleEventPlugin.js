@@ -263,7 +263,7 @@ var SimpleEventPlugin: PluginModule<MouseEvent> = {
       'SimpleEventPlugin: Unhandled event type, `%s`.',
       topLevelType,
     );
-    var event = EventConstructor.getPooled(
+    var event = new EventConstructor(
       dispatchConfig,
       targetInst,
       nativeEvent,
