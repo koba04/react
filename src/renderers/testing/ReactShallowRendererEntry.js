@@ -74,6 +74,10 @@ class ReactShallowRenderer {
     return this._rendered;
   }
 
+  unstable_batchedUpdates(fn) {
+    this._updater.batchedUpdates(fn);
+  }
+
   render(element, context = emptyObject) {
     invariant(
       React.isValidElement(element),
@@ -224,6 +228,20 @@ class ReactShallowRenderer {
 class Updater {
   constructor(renderer) {
     this._renderer = renderer;
+    this._isInBatched = false;
+    this._updateQueue = [];
+    this._callbackQueue = [];
+  }
+
+  batchedUpdates(fn) {
+    if (this._isInBatched) {
+      fn();
+      return;
+    }
+    this._isInBatched = true;
+    fn();
+    this._flushUpdates();
+    this._isInBatched = false;
   }
 
   isMounted(publicInstance) {
@@ -231,37 +249,52 @@ class Updater {
   }
 
   enqueueForceUpdate(publicInstance, callback, callerName) {
-    this._renderer.render(this._renderer._element, this._renderer._context);
-
     if (typeof callback === 'function') {
-      callback.call(publicInstance);
+      this._callbackQueue.push(() => callback.call(publicInstance));
+    }
+
+    if (!this._isInBatched) {
+      this._flushUpdates();
     }
   }
 
   enqueueReplaceState(publicInstance, completeState, callback, callerName) {
-    this._renderer._newState = completeState;
-    this._renderer.render(this._renderer._element, this._renderer._context);
+    this._updateQueue.push(() => {
+      this._renderer._newState = completeState;
+    });
 
     if (typeof callback === 'function') {
-      callback.call(publicInstance);
+      this._callbackQueue.push(() => callback.call(publicInstance));
+    }
+    if (!this._isInBatched) {
+      this._flushUpdates();
     }
   }
 
   enqueueSetState(publicInstance, partialState, callback, callerName) {
-    if (typeof partialState === 'function') {
-      partialState = partialState(publicInstance.state, publicInstance.props);
-    }
-
-    this._renderer._newState = {
-      ...publicInstance.state,
-      ...partialState,
-    };
-
-    this._renderer.render(this._renderer._element, this._renderer._context);
-
+    this._updateQueue.push(() => {
+      if (typeof partialState === 'function') {
+        partialState = partialState(publicInstance.state, publicInstance.props);
+      }
+      this._renderer._newState = {
+        ...publicInstance.state,
+        ...partialState,
+      };
+    });
     if (typeof callback === 'function') {
-      callback.call(publicInstance);
+      this._callbackQueue.push(() => callback.call(publicInstance));
     }
+    if (!this._isInBatched) {
+      this._flushUpdates();
+    }
+  }
+
+  _flushUpdates() {
+    this._updateQueue.forEach(queue => queue());
+    this._renderer.render(this._renderer._element, this._renderer._context);
+    this._callbackQueue.forEach(callback => callback());
+    this._updateQueue = [];
+    this._callbackQueue = [];
   }
 }
 

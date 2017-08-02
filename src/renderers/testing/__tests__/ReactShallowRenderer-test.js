@@ -15,7 +15,7 @@ let createRenderer;
 let PropTypes;
 let React;
 
-describe('ReactTestUtils', () => {
+describe('ReactShallowRenderer', () => {
   beforeEach(() => {
     createRenderer = require('react-test-renderer/shallow').createRenderer;
     PropTypes = require('prop-types');
@@ -657,5 +657,27 @@ describe('ReactTestUtils', () => {
     const cloned = React.cloneElement(instance, {foo: 'baz'});
     result = shallowRenderer.render(cloned);
     expect(result).toEqual(<div>baz:bar</div>);
+  });
+
+  it('should enable batchedUpdates', () => {
+    let renderCount = 0;
+    class App extends React.Component {
+      state = {count: 0};
+      render() {
+        ++renderCount;
+        return <div>hoge</div>;
+      }
+    }
+
+    const shallowRenderer = createRenderer();
+    shallowRenderer.render(<App />);
+    const instance = shallowRenderer.getMountedInstance();
+    renderCount = 0;
+    shallowRenderer.unstable_batchedUpdates(() => {
+      instance.setState({count: instance.state.count + 1});
+      instance.setState({count: instance.state.count + 1});
+    });
+    expect(renderCount).toEqual(1);
+    expect(shallowRenderer.getMountedInstance().state.count).toEqual(1);
   });
 });
