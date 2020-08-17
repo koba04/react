@@ -637,6 +637,9 @@ export function setInitialProperties(
       }
       break;
   }
+
+  // How should I know which events are registered in root components from a Portal?
+  // ensureListeningTo(rootContainerElement, 'onClick', domElement);
 }
 
 // Calculate the diff between the two objects.
