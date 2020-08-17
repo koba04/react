@@ -50,6 +50,7 @@ describe('SimpleEventPlugin', function() {
     }
   });
 
+  /*
   it('A non-interactive tags click when disabled', function() {
     const element = <div onClick={onClick} />;
     expectClickThru(mounted(element));
@@ -504,5 +505,31 @@ describe('SimpleEventPlugin', function() {
 
       expect(onClick).toHaveBeenCalledTimes(0);
     });
+  });
+  */
+  describe('#19608 CaptureEvent for an element within a Portal', () => {
+    it('should be triggered a capture handler by a click event in a Portal', () => {
+      container = document.createElement('div');
+
+      const ref = React.createRef();
+      ReactDOM.render(
+        <section>
+          <div onClick={onClick}>
+            {ReactDOM.createPortal(
+              <button /*onClick={() => {}}*/ ref={ref}>click</button>,
+              document.body
+            )}
+          </div>
+        </section>
+        ,
+        container
+      );
+      const event = new MouseEvent('click', {
+        bubbles: true,
+      });
+      ref.current.dispatchEvent(event);
+
+      expect(onClick).toHaveBeenCalledTimes(1);
+    })
   });
 });
